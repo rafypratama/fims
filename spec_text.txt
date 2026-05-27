@@ -1,0 +1,138 @@
+⬡  FIMS
+Faacos Invoice Management System
+Dokumen Spesifikasi Lengkap — Enterprise Edition
+PT. Tri Jaya Faacos  ·  Sidoarjo, Jawa Timur
+1. Sidebar & Navigasi
+Sidebar menggunakan desain animasi collapsible bergaya modern dengan tema TERANG (light mode), mengacu pada struktur sidebar blackbox.ai namun dengan palet warna putih bersih dan aksen indigo.
+1.1 Logo & Branding FIMS
+Bentuk ikon: Ikon: hexagon outline dengan sudut rounded (⬡), berisi huruf F atau inisial FIMS di tengah — geometric, tegas, modern.
+Teks logo: Teks: "FIMS" bold di sebelah kanan ikon, warna indigo gelap (#4F46E5).
+Collapsed: Saat sidebar collapsed: hanya ikon hexagon yang tampil, teks tersembunyi dengan animasi fade-out.
+Expanded: Saat sidebar expanded: ikon + teks tampil berdampingan dengan fade-in animation (opacity 0→1, translateX).
+1.2 Warna & Tampilan (Light Mode)
+1.3 Animasi
+Toggle: Dipicu tombol toggle (ikon hamburger / chevron) di pojok kiri atas.
+Ukuran: Lebar expanded: 240px | Lebar collapsed: 64px
+CSS Transition: transition: width 250ms ease-in-out
+Label teks: Label teks: opacity 0→1, translateX(-8px)→0, duration 200ms, delay 50ms saat expand.
+Tooltip: Saat collapsed + hover item: tooltip label muncul di kanan dengan fade-in 150ms.
+Persistensi: State disimpan di localStorage agar persisten antar sesi.
+1.4 Struktur Menu Navigasi
+1.5 Footer Sidebar
+Avatar lingkaran dengan inisial nama user + warna background dinamis per user.
+Nama user + role badge (Admin = indigo, Karyawan = abu).
+Tombol logout dengan ikon dan dialog konfirmasi.
+Saat collapsed: hanya avatar yang tampil.
+1.6 Responsif
+Desktop: Desktop (≥1024px): sidebar permanen di kiri, bisa expand/collapse.
+Tablet: Tablet (768–1023px): sidebar default collapsed, expand via klik.
+Mobile: Mobile (<768px): sidebar tersembunyi, diganti bottom navigation bar 5 ikon. Swipe dari kiri = drawer overlay.
+2. Role & Hak Akses Pengguna
+3. Customer, Brand & Produk — Sistem Mapping
+Ini adalah fitur paling kritis dalam FIMS. Setiap customer memiliki nama brand utama dan katalog produk eksklusif dengan harga khusus. Saat membuat invoice atau surat jalan, pengguna cukup mengetik nama customer atau nama brand — sistem langsung menyaring dan menampilkan hanya produk milik customer tersebut.
+3.1 Konsep Hierarki Data
+3.2 Cara Kerja Smart Autofill
+Alur pengisian saat membuat Invoice atau Surat Jalan:
+Pengguna mulai mengetik nama customer atau nama brand di kolom pencarian.
+Dropdown real-time muncul menampilkan customer/brand yang cocok beserta preview jumlah produk.
+Setelah dipilih, sistem HANYA menampilkan produk milik customer/brand tersebut — produk lain tidak muncul.
+Produk default milik customer tersebut terisi otomatis: nama produk, harga, satuan, dan spesifikasi.
+Pengguna dapat mengubah qty, harga (override manual), atau menambah/hapus item sesuai kebutuhan transaksi.
+3.3 Penambahan Brand / Customer Baru
+Saat Admin menambahkan customer atau brand baru ke Master Data:
+Input wajib: Nama Customer/Perusahaan, Nama Brand Utama, PIC, Kontak, Alamat.
+Setelah customer dibuat, Admin langsung menambahkan katalog produk khusus customer tersebut.
+Setiap produk dalam katalog memiliki: Nama Produk, Kode Produk (opsional), Satuan, Harga Default.
+Harga dapat di-override per transaksi tanpa mengubah harga default di master data.
+Satu customer bisa memiliki lebih dari satu brand; pencarian bisa dilakukan via nama customer ATAU nama brand.
+3.4 Isolasi Data Antar Customer
+Produk customer A tidak pernah muncul di form customer B — isolasi penuh.
+Jika ada nama produk yang sama di dua customer berbeda, sistem membedakannya berdasarkan customer_id.
+Pencarian global (header) tetap bisa mencari lintas customer, tetapi form invoice/surat jalan tetap terisolasi.
+4. Manajemen Invoice
+4.1 Komponen Invoice
+Data customer (nama, brand, PIC, alamat) — terisi otomatis via smart autofill.
+Daftar item: produk, qty, harga satuan (bisa di-override), jumlah.
+Subtotal, DP opsional (nominal atau persentase), PPN 11% toggle per invoice, grand total.
+Informasi pembayaran: instruksi transfer ke BCA & Mandiri, nama penerima Eva Triwulandari.
+Catatan bebas, status invoice, tanggal jatuh tempo.
+4.2 Alur Status Invoice
+4.3 Output PDF Invoice
+Header: logo perusahaan, nama, alamat, nomor telepon.
+Tabel item dengan kalkulasi otomatis.
+Informasi pembayaran: BCA & Mandiri, nomor rekening, nama penerima Eva Triwulandari.
+Teks closing yang dapat dikonfigurasi Admin.
+Tanda tangan dan stempel (area placeholder).
+5. Surat Jalan
+5.1 Komponen Surat Jalan
+Nomor otomatis, tanggal pengiriman, data customer & alamat pengiriman.
+Daftar barang: nama, qty, satuan, keterangan — terisi otomatis dari invoice terkait jika ada.
+Nama pengirim, nama penerima, area tanda tangan rangkap (pengirim & penerima).
+Catatan pengiriman, referensi nomor invoice (opsional).
+5.2 Dukungan Cetak Dot Matrix
+Print preview dengan pengaturan margin dan ukuran kertas yang dapat dikonfigurasi.
+Mode cetak hitam-putih untuk efisiensi tinta.
+Kompatibilitas continuous paper / kertas rangkap merah-putih.
+Konfigurasi margin dan ukuran kertas disimpan di Pengaturan Sistem.
+6. Master Data & Import Excel
+6.1 Modul Master Data
+Customer: nama, brand utama, PIC, telepon, email, alamat, status aktif/nonaktif.
+Produk per customer: nama, kode, satuan, harga default — terisolasi per customer.
+Rekening bank: nama bank, nomor rekening, nama penerima (tampil di PDF invoice).
+6.2 Import Excel — Harga per Customer
+Tersedia 9 file Excel yang harus diimpor: Harga Chumairah.xlsx, Harga Jealous.xlsx, Harga Jitu.xlsx, Harga Laskin.xlsx, Harga Madira.xlsx, Harga ML.xlsx, Harga Orchidea.xlsx, Harga Shieeby.xlsx, Harga Talkme.xlsx.
+Batch upload semua file sekaligus di halaman Data Onboarding.
+Nama customer dibaca otomatis dari nama file ("Harga [NamaCustomer].xlsx").
+Sistem memetakan produk + harga ke customer yang sesuai, mengisi mapping otomatis.
+Preview data sebelum import, validasi format, mode upsert (update jika ada, tambah jika baru).
+Laporan hasil: jumlah berhasil, gagal, dan duplikat yang di-skip atau di-update.
+6.3 Migrasi Riwayat Invoice (PDF Lama)
+Tersedia file PDF lama per transaksi (Invoice 01 ML.pdf, Invoice 02 Madira.pdf, dst.). Dua jalur impor:
+Jalur 1 — Parsing otomatis: sistem membaca teks PDF, mengekstrak data invoice ke form verifikasi sebelum disimpan.
+Jalur 2 — Input manual dipandu form: PDF tampil di panel kiri, form input terstruktur di panel kanan untuk entri cepat jika PDF tidak bisa di-parse.
+Setelah diimpor, riwayat invoice dapat dicari, difilter, dan dijadikan referensi.
+6.4 File Referensi Customer
+File Bonus Cust Faacos.pdf dapat diupload sebagai lampiran di master data customer.
+Konten bisa dijadikan acuan pengisian data customer secara manual.
+7. Dashboard
+7.1 Dashboard Admin
+KPI Cards: total invoice, belum dibayar, jatuh tempo, total surat jalan, customer aktif, total nilai penjualan.
+Grafik tren invoice per bulan, distribusi status invoice (donut chart).
+Top 5 customer by revenue, top 5 produk terlaris.
+Log aktivitas terbaru seluruh user, alert invoice mendekati jatuh tempo.
+7.2 Dashboard Karyawan
+Ringkasan dokumen yang dibuat hari ini dan minggu ini.
+Draft invoice/surat jalan yang belum selesai.
+Shortcut cepat: tombol buat invoice baru, buat surat jalan baru.
+8. Pencarian & Filter
+Global search bar di header: mencari invoice, surat jalan, dan customer secara real-time lintas modul.
+Filter per modul: nomor dokumen, nama customer/brand, rentang tanggal, status, nilai, dibuat oleh.
+Hasil pencarian customer/brand di form invoice langsung terisolasi ke produk milik customer tersebut.
+9. Pengaturan Sistem (Admin)
+10. Spesifikasi Teknis Sidebar (untuk Developer)
+10.1 CSS & Animasi
+10.2 Warna (Light Theme — Wajib)
+10.3 Stack Teknologi yang Direkomendasikan
+Frontend: React + TypeScript + TailwindCSS (konsisten di semua platform).
+Desktop: Tauri (lebih ringan) atau Electron — build .exe dari codebase yang sama.
+Mobile: React Native (share logic dengan web) atau Flutter.
+Backend: Node.js (Express/Fastify) atau Python (FastAPI) + PostgreSQL.
+PDF parsing: pdfplumber atau PyMuPDF untuk migrasi invoice lama.
+Excel parsing: openpyxl atau pandas untuk import harga customer.
+PDF generate: Puppeteer (HTML→PDF) atau ReportLab (Python) untuk output invoice/surat jalan.
+11. Alur Data Onboarding (Setup Awal)
+Halaman khusus yang hanya diakses Admin, tersedia saat setup awal maupun kapan saja. Memandu Admin mengimpor semua data existing tanpa input manual satu per satu.
+Langkah Onboarding
+Upload semua file Excel harga (batch) → preview per file → validasi → import → konfirmasi mapping customer-produk.
+Upload file PDF invoice lama (batch) → pilih mode parsing otomatis atau manual → review per dokumen → simpan ke database.
+Upload file referensi customer (Bonus Cust Faacos.pdf) → lampirkan ke master data customer.
+Laporan akhir onboarding: jumlah data berhasil diimpor, gagal, dan duplikat yang di-skip atau di-update.
+Semua proses import berjalan secara async (background) dengan progress indicator. Jika parsing otomatis gagal pada sebagian field, sistem menandai field tersebut dan meminta konfirmasi manual — tidak menolak seluruh dokumen.
+12. Prinsip Arsitektur
+Scalable & modular: setiap modul (invoice, surat jalan, customer, produk) berdiri sendiri dan mudah dikembangkan.
+Keamanan: autentikasi JWT, role-based access control, log aktivitas seluruh aksi Admin dan Karyawan.
+Cross-platform: satu codebase frontend untuk web, desktop, dan mobile.
+Offline-capable (nice to have): mode offline untuk mobile dengan sinkronisasi saat online.
+API-first: semua fitur exposed via REST API, memungkinkan integrasi masa depan.
+Sistem siap digunakan sebagai platform operasional jangka panjang, bukan sekadar MVP.
+FIMS — Faacos Invoice Management System  ·  PT. Tri Jaya Faacos  ·  Dokumen Internal
